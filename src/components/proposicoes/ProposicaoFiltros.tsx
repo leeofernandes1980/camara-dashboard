@@ -76,6 +76,7 @@ export default function ProposicaoFiltros({
             value={keywords}
             onChange={(e) => onKeywords(e.target.value)}
             placeholder="Ex: PEC 221/2019, PCD, clima..."
+            maxLength={100}
             className={`w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 ${
               isRefPattern(keywords)
                 ? 'border-blue-400 ring-1 ring-blue-300 bg-blue-50 focus:ring-blue-500'
@@ -106,6 +107,7 @@ export default function ProposicaoFiltros({
             value={autor}
             onChange={(e) => onAutor(e.target.value)}
             placeholder="Ex: Lira, Gleisi..."
+            maxLength={100}
             className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>

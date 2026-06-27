@@ -96,6 +96,7 @@ export default function CeapDeputadoSearch() {
                 placeholder="Digite o nome do deputado..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
+                maxLength={100}
                 className="flex-1 text-sm bg-transparent outline-none min-w-0"
               />
             )}

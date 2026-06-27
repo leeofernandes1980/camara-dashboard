@@ -30,6 +30,7 @@ export default function DeputadoFiltros({
             value={nome}
             onChange={(e) => onNome(e.target.value)}
             placeholder="Ex: Lira, Moro..."
+            maxLength={100}
             className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -52,8 +53,9 @@ export default function DeputadoFiltros({
         <input
           type="text"
           value={siglaPartido}
-          onChange={(e) => onPartido(e.target.value.toUpperCase())}
+          onChange={(e) => onPartido(e.target.value.toUpperCase().slice(0, 10))}
           placeholder="Ex: PT, PL, MDB..."
+          maxLength={10}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>

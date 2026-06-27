@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { getTodosDeputados, getBatchDespesas } from '@/app/actions'
-import type { DeputadoRanking } from '@/lib/types'
+import type { Deputado, DeputadoRanking } from '@/lib/types'
 import RankingTable, { type RankingItem } from './RankingTable'
 import { anoAtual } from '@/lib/utils'
 import { TrendingUp, Loader2 } from 'lucide-react'
 
 const BATCH = 20
+const LOTES_PARALELOS = 3
 
 export default function GastosRankingLoader() {
   const [carregando, setCarregando] = useState(false)
@@ -27,22 +28,37 @@ export default function GastosRankingLoader() {
       const deputados = await getTodosDeputados()
       setTotal(deputados.length)
 
+      const lotes: Deputado[][] = []
+      for (let i = 0; i < deputados.length; i += BATCH) {
+        lotes.push(deputados.slice(i, i + BATCH))
+      }
+
+      let processados = 0
       const resultados: DeputadoRanking[] = []
 
-      for (let i = 0; i < deputados.length; i += BATCH) {
-        const lote = deputados.slice(i, i + BATCH)
-        const ids = lote.map((d) => d.id)
-        const totais = await getBatchDespesas(ids, ano)
-        const com = lote.map((d) => ({ ...d, totalGasto: totais[d.id] ?? 0 }))
-        resultados.push(...com)
-        setProgresso(Math.min(i + BATCH, deputados.length))
+      for (let i = 0; i < lotes.length; i += LOTES_PARALELOS) {
+        const grupo = lotes.slice(i, i + LOTES_PARALELOS)
+        const gruposResolvidos = await Promise.all(
+          grupo.map(async (lote) => {
+            const ids = lote.map((d) => d.id)
+            const totais = await getBatchDespesas(ids, ano)
+            return lote.map((d) => ({ ...d, totalGasto: totais[d.id] ?? 0 }))
+          })
+        )
+        for (const com of gruposResolvidos) {
+          resultados.push(...com)
+          processados += com.length
+        }
+        setProgresso(processados)
       }
 
       resultados.sort((a, b) => b.totalGasto - a.totalGasto)
       setRanking(resultados)
     } catch (err) {
       setErro('Erro ao carregar dados. Tente novamente.')
-      console.error(err)
+      if (process.env.NODE_ENV === 'development') {
+        console.error(err)
+      }
     } finally {
       setCarregando(false)
     }

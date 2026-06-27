@@ -19,6 +19,9 @@ export function useProposicoes(filtros: FiltrosProposicoes = {}) {
   const [erro, setErro] = useState<string | null>(null)
   const [temProxima, setTemProxima] = useState(false)
 
+  // Chave estável (comparação por valor) usada como dependência no lugar do objeto filtros.
+  const filtrosKey = JSON.stringify(filtros)
+
   const carregar = useCallback(async () => {
     setCarregando(true)
     setErro(null)
@@ -36,7 +39,7 @@ export function useProposicoes(filtros: FiltrosProposicoes = {}) {
     } finally {
       setCarregando(false)
     }
-  }, [JSON.stringify(filtros)])
+  }, [filtrosKey])
 
   useEffect(() => { carregar() }, [carregar])
 
