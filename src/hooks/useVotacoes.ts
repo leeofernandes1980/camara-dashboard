@@ -18,6 +18,9 @@ export function useVotacoes(filtros: FiltrosVotacoes = {}) {
   const [erro, setErro] = useState<string | null>(null)
   const [temProxima, setTemProxima] = useState(false)
 
+  // Chave estável (comparação por valor) usada como dependência no lugar do objeto filtros.
+  const filtrosKey = JSON.stringify(filtros)
+
   const carregar = useCallback(async () => {
     setCarregando(true)
     setErro(null)
@@ -30,7 +33,7 @@ export function useVotacoes(filtros: FiltrosVotacoes = {}) {
     } finally {
       setCarregando(false)
     }
-  }, [JSON.stringify(filtros)])
+  }, [filtrosKey])
 
   useEffect(() => {
     carregar()

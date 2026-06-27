@@ -17,6 +17,9 @@ export function useDeputados(filtros: FiltrosDeputados = {}) {
   const [erro, setErro] = useState<string | null>(null)
   const [temProxima, setTemProxima] = useState(false)
 
+  // Chave estável (comparação por valor) usada como dependência no lugar do objeto filtros.
+  const filtrosKey = JSON.stringify(filtros)
+
   const carregar = useCallback(async () => {
     setCarregando(true)
     setErro(null)
@@ -29,7 +32,7 @@ export function useDeputados(filtros: FiltrosDeputados = {}) {
     } finally {
       setCarregando(false)
     }
-  }, [JSON.stringify(filtros)])
+  }, [filtrosKey])
 
   useEffect(() => {
     carregar()

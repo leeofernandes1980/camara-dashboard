@@ -111,7 +111,7 @@ async function ProposicaoContent({ id }: { id: number }) {
               <p className="text-sm text-blue-700">{status.descricaoTramitacao}</p>
             )}
             {status.despacho && (
-              <p className="text-sm text-blue-600 italic">"{truncarTexto(status.despacho, 300)}"</p>
+              <p className="text-sm text-blue-600 italic">&ldquo;{truncarTexto(status.despacho, 300)}&rdquo;</p>
             )}
             {status.dataHora && (
               <p className="text-xs text-blue-500">Atualizado em: {formatarData(status.dataHora)}</p>
