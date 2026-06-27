@@ -60,14 +60,18 @@ export async function fetchDeputados(params?: {
 }
 
 export async function fetchTodosDeputados(): Promise<Deputado[]> {
-  const todos: Deputado[] = []
-  let pagina = 1
-  while (true) {
-    const res = await fetchDeputados({ itens: 100, pagina })
-    todos.push(...res.dados)
-    if (!res.links.some((l) => l.rel === 'next')) break
-    pagina++
+  const primeira = await fetchDeputados({ itens: 100, pagina: 1 })
+  const todos: Deputado[] = [...primeira.dados]
+
+  const lastHref = primeira.links.find((l) => l.rel === 'last')?.href
+  const totalPaginas = lastHref ? Number(new URL(lastHref).searchParams.get('pagina')) || 1 : 1
+
+  if (totalPaginas > 1) {
+    const restantes = Array.from({ length: totalPaginas - 1 }, (_, i) => i + 2)
+    const resultados = await Promise.all(restantes.map((pagina) => fetchDeputados({ itens: 100, pagina })))
+    for (const r of resultados) todos.push(...r.dados)
   }
+
   return todos
 }
 
@@ -284,14 +288,20 @@ export async function fetchTodosDeputadosFiltrados(params: {
   siglaUF?: string
   siglaPartido?: string
 }): Promise<Deputado[]> {
-  const todos: Deputado[] = []
-  let pagina = 1
-  while (true) {
-    const res = await fetchDeputados({ ...params, itens: 100, pagina })
-    todos.push(...res.dados)
-    if (!res.links.some((l) => l.rel === 'next')) break
-    pagina++
+  const primeira = await fetchDeputados({ ...params, itens: 100, pagina: 1 })
+  const todos: Deputado[] = [...primeira.dados]
+
+  const lastHref = primeira.links.find((l) => l.rel === 'last')?.href
+  const totalPaginas = lastHref ? Number(new URL(lastHref).searchParams.get('pagina')) || 1 : 1
+
+  if (totalPaginas > 1) {
+    const restantes = Array.from({ length: totalPaginas - 1 }, (_, i) => i + 2)
+    const resultados = await Promise.all(
+      restantes.map((pagina) => fetchDeputados({ ...params, itens: 100, pagina }))
+    )
+    for (const r of resultados) todos.push(...r.dados)
   }
+
   return todos
 }
 
