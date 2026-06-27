@@ -65,10 +65,6 @@ export interface Votacao {
   votosOutros: number
 }
 
-export interface VotacaoDeputado extends Votacao {
-  tipoVoto: string
-}
-
 export interface Voto {
   tipoVoto: string
   dataRegistroVoto: string

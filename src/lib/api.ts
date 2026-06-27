@@ -3,7 +3,6 @@ import type {
   DeputadoDetalhe,
   Despesa,
   Votacao,
-  VotacaoDeputado,
   Voto,
   Orientacao,
   Orgao,
@@ -99,17 +98,6 @@ export async function fetchDiscursosDeputado(
     return await apiFetch(buildUrl(`/deputados/${id}/discursos`, params as Record<string, string | number | undefined>))
   } catch (err) {
     throw new Error(`Falha ao buscar discursos do deputado ${id}: ${(err as Error).message}`)
-  }
-}
-
-export async function fetchVotacoesDeputado(
-  id: number,
-  params?: { dataInicio?: string; dataFim?: string; itens?: number; pagina?: number }
-): Promise<PaginatedResponse<VotacaoDeputado>> {
-  try {
-    return await apiFetch(buildUrl(`/deputados/${id}/votacoes`, params as Record<string, string | number | undefined>))
-  } catch (err) {
-    throw new Error(`Falha ao buscar votações do deputado ${id}: ${(err as Error).message}`)
   }
 }
 

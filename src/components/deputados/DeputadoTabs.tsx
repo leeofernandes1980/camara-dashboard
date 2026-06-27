@@ -2,10 +2,9 @@
 
 import { useState } from 'react'
 import { anoAtual } from '@/lib/utils'
-import { FileText, Mic, Users2, Receipt, Vote } from 'lucide-react'
+import { FileText, Mic, Users2, Receipt } from 'lucide-react'
 import DespesasTab from './tabs/DespesasTab'
 import ProposicoesTab from './tabs/ProposicoesTab'
-import VotacoesTab from './tabs/VotacoesTab'
 import DiscursosTab from './tabs/DiscursosTab'
 import ComissoesTab from './tabs/ComissoesTab'
 
@@ -13,12 +12,11 @@ interface DeputadoTabsProps {
   deputadoId: number
 }
 
-type Aba = 'despesas' | 'proposicoes' | 'discursos' | 'comissoes' | 'votacoes'
+type Aba = 'despesas' | 'proposicoes' | 'discursos' | 'comissoes'
 
 const tabs: { id: Aba; label: string; icone: React.ElementType }[] = [
   { id: 'despesas', label: 'Despesas CEAP', icone: Receipt },
   { id: 'proposicoes', label: 'Proposições', icone: FileText },
-  { id: 'votacoes', label: 'Votações', icone: Vote },
   { id: 'discursos', label: 'Discursos', icone: Mic },
   { id: 'comissoes', label: 'Comissões', icone: Users2 },
 ]
@@ -28,7 +26,6 @@ export default function DeputadoTabs({ deputadoId }: DeputadoTabsProps) {
   const [ano, setAno] = useState(anoAtual())
   const [paginaDespesas, setPaginaDespesas] = useState(1)
   const [paginaProposicoes, setPaginaProposicoes] = useState(1)
-  const [paginaVotacoes, setPaginaVotacoes] = useState(1)
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -70,13 +67,6 @@ export default function DeputadoTabs({ deputadoId }: DeputadoTabsProps) {
             deputadoId={deputadoId}
             pagina={paginaProposicoes}
             onPaginaChange={setPaginaProposicoes}
-          />
-        )}
-        {aba === 'votacoes' && (
-          <VotacoesTab
-            deputadoId={deputadoId}
-            pagina={paginaVotacoes}
-            onPaginaChange={setPaginaVotacoes}
           />
         )}
         {aba === 'discursos' && <DiscursosTab deputadoId={deputadoId} />}
