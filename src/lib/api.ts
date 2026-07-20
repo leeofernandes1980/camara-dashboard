@@ -85,7 +85,12 @@ export async function fetchDespesasDeputado(
   params?: { ano?: number; mes?: number; itens?: number; pagina?: number }
 ): Promise<PaginatedResponse<Despesa>> {
   try {
-    return await apiFetch(buildUrl(`/deputados/${id}/despesas`, params as Record<string, string | number | undefined>))
+    // Anos fechados não mudam mais: cache longo. Ano corrente ainda recebe lançamentos: cache curto.
+    const revalidate = params?.ano && params.ano < new Date().getFullYear() ? 86400 : 3600
+    return await apiFetch(
+      buildUrl(`/deputados/${id}/despesas`, params as Record<string, string | number | undefined>),
+      revalidate
+    )
   } catch (err) {
     throw new Error(`Falha ao buscar despesas do deputado ${id}: ${(err as Error).message}`)
   }
