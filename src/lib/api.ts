@@ -35,8 +35,11 @@ function buildUrl(path: string, params?: Record<string, string | number | undefi
 }
 
 async function apiFetch<T>(url: string, revalidate?: number): Promise<T> {
+  // No Vercel (Next.js 16), o Runtime/Data Cache só passa a persistir fetches
+  // entre invocações serverless com `cache: 'force-cache'` explícito — só
+  // `next.revalidate` não é suficiente (ver docs/runtime-cache do Vercel).
   const cacheOpt: RequestInit = revalidate
-    ? ({ next: { revalidate } } as RequestInit)
+    ? ({ cache: 'force-cache', next: { revalidate } } as RequestInit)
     : { cache: 'no-store' }
   const res = await fetch(url, { headers: defaultHeaders, ...cacheOpt })
   if (!res.ok) throw new Error(`HTTP ${res.status} — ${url}`)
