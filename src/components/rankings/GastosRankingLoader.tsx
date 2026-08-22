@@ -53,7 +53,15 @@ export default function GastosRankingLoader() {
       }
 
       resultados.sort((a, b) => b.totalGasto - a.totalGasto)
-      setRanking(resultados)
+
+      const somaTotal = resultados.reduce((acc, d) => acc + d.totalGasto, 0)
+      if (somaTotal === 0) {
+        setErro(
+          `A API da Câmara não retornou nenhuma despesa para ${ano} (é improvável que todos os ${resultados.length} deputados tenham gasto zero). O serviço de dados abertos pode estar temporariamente indisponível — tente novamente em alguns minutos.`
+        )
+      } else {
+        setRanking(resultados)
+      }
     } catch (err) {
       setErro('Erro ao carregar dados. Tente novamente.')
       if (process.env.NODE_ENV === 'development') {
