@@ -90,10 +90,14 @@ export async function fetchDespesasDeputado(
   try {
     // Anos fechados não mudam mais: cache longo. Ano corrente ainda recebe lançamentos: cache curto.
     const revalidate = params?.ano && params.ano < new Date().getFullYear() ? 86400 : 3600
-    return await apiFetch(
-      buildUrl(`/deputados/${id}/despesas`, params as Record<string, string | number | undefined>),
-      revalidate
-    )
+    const url = buildUrl(`/deputados/${id}/despesas`, params as Record<string, string | number | undefined>)
+    const res = await apiFetch<PaginatedResponse<Despesa>>(url, revalidate)
+    if (res.dados.length > 0 || (params?.pagina ?? 1) > 1) return res
+
+    // A API da Câmara responde 200 com "dados: []" de forma intermitente (instabilidade
+    // observada no endpoint), e um resultado vazio ficaria em cache até o revalidate acima
+    // expirar. Confirma sem cache antes de aceitar que realmente não há despesas.
+    return await apiFetch<PaginatedResponse<Despesa>>(url)
   } catch (err) {
     throw new Error(`Falha ao buscar despesas do deputado ${id}: ${(err as Error).message}`)
   }
